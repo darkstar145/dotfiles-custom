@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+
+import pyexiv2
+import getopt
+import os
+import os.path
+import sys
+
+# Options and help messages.
+usage = """Usage: canonize [options] [list of files]
+
+Options:
+  -s sss    optional suffix
+  -f        get filenames from STDIN instead of command line
+  -t        show the renaming but don't do it
+  -h        show this help message
+
+Rename a list of photo files (JPEGs) according to the date
+on which they were taken. The format for the file name is
+yyyymmddsss-nnn.jpg, where yyyy is the year, mm is the month
+number, dd is the day, sss is the optional suffix (which can
+be any length), and nnn is the (zero-padded) photo number
+for that day. By default, the original file names are given
+on the command line; if the -f option is used, the original
+file names are taken from STDIN."""
+
+# Handle the command line options.
+try:
+  options, filenames = getopt.getopt(sys.argv[1:], 's:fth')
+except getopt.GetoptError, err:
+  print str(err)
+  sys.exit(2)
+
+filtrate = False    # default for -f
+suffix = ''         # default for -s
+test = False        # default for -t
+for o, a in options:
+  if o == '-s':
+    suffix = a
+  elif o == '-f':
+    filtrate = True
+  elif o == '-t':
+    test = True
+  else:
+    print usage
+    sys.exit()
+
+# Get the file list and create a list of (filedate, filename) tuples.
+if filtrate:
+  filenames = sys.stdin.read().split()
+filedates = []
+for f in filenames:
+  info = pyexiv2.ImageMetadata(f)
+  try:                              # skip over files without EXIF info
+    info.read()
+    d = info['Exif.Photo.DateTimeOriginal'].raw_value
+    filedates.append((d, f))
+  except KeyError:
+    continue
+
+# Don't bother going on if there aren't any files in the list.
+if len(filedates) == 0:
+  sys.exit()
+
+# Some background info:
+# DateTimeOriginal is a string in the form 'yyyy:mm:dd hh:mm:ss'.
+# All the numbers use leading zeros if necessary; the hours use a
+# 24-hour clock format. An alphabetic sort on strings in this form
+# also sorts on date and time. Running split() on this string yields
+# a (date, time) tuple.
+
+# Sort the files according to date and time taken.   
+filedates.sort()
+
+# Create a list of (oldfilename, newfilename) tuples.
+newnames = []
+i = 0                               # initialize the sequence number
+prev = filedates[0][0].split()[0]   # initialize the date 
+for date, old in filedates:
+  current = date.split()[0]
+  if current == prev:               # still on same date
+    i += 1
+  else:                             # starting new date
+    i = 1
+    prev = current
+  path = os.path.dirname(old)
+  new = os.path.join(path,
+    "%s%s-%03d.jpg" % (current.replace(':', ''), suffix, i))
+  if new in filenames:
+    sys.stderr.write("Error: %s is already being used\n" % new)
+    sys.exit()
+  else:
+    newnames.append((old, new))
+
+# Rename the files or print out how they would be renamed.
+if test:
+  for o,n in newnames:
+    print "%s -> %s" % (o, n)
+else:
+  for o,n in newnames:
+    os.rename(o,n)

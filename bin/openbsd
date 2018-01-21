@@ -1,0 +1,7 @@
+#!/bin/sh
+
+qemu-system-x86_64 \
+  -m 256M \
+  -net nic,model=e1000,macaddr=52:54:00:4e:62:8a \
+  -cdrom ~/install58.iso \
+  -hda openbsd.img -boot d

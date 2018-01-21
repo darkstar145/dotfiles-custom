@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export PATH="$HOME/bin:/usr/local/bin:$PATH"
+
+base=${1%.md}
+mdname=$base.md
+texname=$base.tex
+htmlname=$base.html
+# echo base:    $base
+# echo mdname:  $mdname
+# echo texname: $texname
+# echo htmlname: $htmlname
+if [ -f $mdname ]; then
+#    multimarkdown -f $mdname | smartypants | xsltproc -nonet -novalid ~/Dropbox/code/xslt/xhtml2article-report.xslt - > $texname
+# output html intermediate, for debugging and one-day use
+    multimarkdown -f $mdname | smartypants | sed 's/-\&gt;/\&#8594;/g' > $htmlname
+    cat $htmlname | xsltproc -nonet -novalid ~/Dropbox/code/xslt/xhtml2article-report.xslt $htmlname | sed 's/\$\$//' > $texname
+    # sed to remove two consecutive $, mainly for superscripts and subscripts in chemical compounds
+else
+echo No such file: $mdname
+fi

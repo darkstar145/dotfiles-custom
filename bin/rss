@@ -1,0 +1,6 @@
+#!/bin/sh
+
+export PATH="$HOME/bin:$PATH"
+
+dayfeed > "$HOME/temprss.html"
+mv "$HOME/temprss.html" "$HOME/Dropbox/todaysrss.html"
