@@ -88,17 +88,24 @@ print '''<html>
 <meta name="viewport" content="width=device-width" />
 <head>
 <style>
-body {{
-  background-color: #555;
-  width: 750px;
-  margin-top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 0;
-  font-size: 20px;
+html{{
+    background-color:#fefefe
 }}
-h1 {{
-  font-family: Helvetica, Sans-serif;
+body{{
+    font-family:sans-serif;
+    color:#454545;
+    font-size:16px;
+    margin:auto;
+    max-width:800px;
+    padding:1em;
+    line-height:1.4;
+    text-align:justify
+}}
+a{{
+    color:#07a
+}}
+a:visited{{
+    color:#941352
 }}
 .rss {{
   list-style-type: none;
@@ -137,6 +144,11 @@ h1 {{
 }}
 img {{
   max-width: 700px;
+}}
+@media screen and (max-width:500px){{
+    body{{
+        text-align:left
+    }}
 }}
 @media screen and (max-width:667px) {{
   body {{
