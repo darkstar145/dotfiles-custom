@@ -83,7 +83,7 @@ for p in posts:
 ul = '\n<hr />\n'.join(litems)
 
 # Print the HTMl.
-print '''<html>
+html = '''<html>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width" />
 <head>
@@ -172,3 +172,7 @@ img {{
 </body>
 </html>
 '''.format(ul)
+
+f = open('rss.html','w+')
+f.write(html)
+f.close()
