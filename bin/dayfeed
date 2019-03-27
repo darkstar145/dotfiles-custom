@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf8
 
 import feedparser as fp
@@ -76,7 +76,8 @@ listTemplate = '''<li>
   <p>{4}</p>\n</li>'''
 litems = []
 for p in posts:
-  q = [ x.encode('utf8') for x in p[1:] ]
+  #q = [ x.encode('utf8') for x in p[1:] ]
+  q = [ x for x in p[1:] ]
   timestamp = p[0].astimezone(homeTZ)
   q.insert(0, timestamp.strftime('%b %d, %Y %I:%M %p'))
   litems.append(listTemplate.format(*q))
