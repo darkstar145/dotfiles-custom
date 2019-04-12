@@ -30,15 +30,16 @@
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+
 ;; smex, ido
-(require 'smex)
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;(require 'smex)
+;(smex-initialize)
+;(global-set-key (kbd "M-x") 'smex)
+;(global-set-key (kbd "M-X") 'smex-major-mode-commands)
 ;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-(ido-mode 1)
-(ido-everywhere 1)
+;(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+;(ido-mode 1)
+;(ido-everywhere 1)
 
 ;; paredit
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
@@ -59,16 +60,16 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
+    ("4639288d273cbd3dc880992e6032f9c817f17c4a91f00f3872009a099f5b3f84" "170bb47b35baa3d2439f0fd26b49f4278e9a8decf611aa33a0dad1397620ddc3" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
  '(package-selected-packages
    (quote
-    (org-bullets smart-mode-line evil-magit magit smex better-defaults evil leuven-theme rjsx-mode intero))))
+    (org-beautify-theme solarized-theme org-bullets smart-mode-line evil-magit magit smex better-defaults evil leuven-theme rjsx-mode intero))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(org-mode-line-clock ((t (:foreground "red" :box (:line-width -1 :style released-button))))))
 
 ;; The following setting is different from the document so that you
 ;; can override the document path by setting your path in the variable
@@ -1500,7 +1501,7 @@ so change the default 'F' binding in the agenda to allow both"
 (setq org-agenda-time-grid (quote 
                              ((daily today remove-match)
                               (0900 1100 1300 1500 1700)                                   
-                              "......" "----------------")))
+                              "......" "- - - - - - - - - - - - - - - - - - - - - - - - - - -")))
 
 ;; Display tags farther right
 (setq org-agenda-tags-column -102)
@@ -1775,12 +1776,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (setq org-return-follows-link t)
 
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(org-mode-line-clock ((t (:foreground "red" :box (:line-width -1 :style released-button)))) t))
+
 
 (defun bh/prepare-meeting-notes ()
   "Prepare meeting notes for email
@@ -1948,5 +1944,5 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (setq org-use-sub-superscripts nil)
 
 (setq org-odd-levels-only nil)
-
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 3.0))
 (run-at-time "00:59" 3600 'org-save-all-org-buffers)
