@@ -1,46 +1,97 @@
-#!/usr/bin/env python3
-# coding=utf8
-
 import feedparser as fp
+import sqlite3
 import time
 from datetime import datetime, timedelta
 import pytz
 import os
 
-subscriptions = [
-  'http://feedpress.me/512pixels',
-  'http://www.leancrew.com/all-this/feed/',
-  'http://www.betalogue.com/feed/',
-  'http://kieranhealy.org/blog/index.xml',
-  'http://brett.trpstra.net/brettterpstra',
-  'http://feeds.feedburner.com/CommonplaceCartography',
-  'http://feeds.feedburner.com/drbunsenblog',
-  'http://stratechery.com/feed/',
-  'http://www.caseyliss.com/rss',
-  'http://www.macdrifter.com/feeds/all.atom.xml',
-  'http://macsparky.com/blog?format=rss',
-  'http://www.macstories.net/feed/',
-  'http://www.marco.org/rss',
-  'http://onethingwell.org/rss',
-  'http://feeds.feedburner.com/PracticallyEfficient',
-  'http://feedpress.me/sixcolors',
-  'http://xkcd.com/atom.xml',
-  'http://doingthatwrong.com/?format=rss']
+conn = sqlite3.connect('./rss.db')
+c = conn.cursor()
 
-# Date and time setup. I want only posts from "today,"
-# where the day lasts until 2 AM.
+# Create table
+c.execute('''CREATE TABLE IF NOT EXISTS rss
+             (feed string, article_id string)''')
+
+subscriptions = [
+  'https://nanxiao.me/en/feed/',
+  'https://usesthis.com/feed.atom',
+  'http://www.leancrew.com/all-this/feed/',
+  'http://brettterpstra.com/atom.xml',
+  'http://feedpress.me/sixcolors',
+  'https://www.tedunangst.com/flak/rss',
+  'http://www.drbunsen.org/feed.xml',
+  'https://pxlnv.com/feed',
+  'https://www.hillelwayne.com/index.xml',
+  'http://austinmann.com/trek?format=RSS',
+  'http://macdrifter.com/feeds/all.atom.xml',
+  'http://www.norvig.com/rss-feed.xml',
+  'http://mattgemmell.com/feed',
+  'http://www.loopinsight.com/feed/',
+  'http://omgchrome.com/feed',
+  'http://feeds2.feedburner.com/pugetsystems_all',
+  'http://randsinrepose.com/feed/',
+  'http://david-smith.org/atom.xml',
+  'http://feedpress.me/birchtree',
+  'https://512pixels.net/feed/',
+  'http://feeds.feedburner.com/37signals/beMH',
+  'http://xkcd.com/rss.xml',
+  'https://www.blog.google/rss/',
+  'http://www.thecramped.com/feed/',
+  'http://daringfireball.net/index.xml',
+  'http://mjtsai.com/blog/feed/',
+  'http://thesweetsetup.com/feed/',
+  'http://feeds.feedburner.com/InformationArchitectsJapan',
+  'https://om.co/feed/',
+  'https://blog.lessonslearned.org/rss/',
+  'http://feeds.feedburner.com/macstoriesnet',
+  'http://praeclarum.org/rss',
+  'http://feeds.feedburner.com/codinghorror/',
+  'http://blog.mozilla.com/feed/',
+  'http://www.johnnypatience.com/feed/',
+  'https://www.fs.blog/feed/',
+  'http://macwright.org/atom.xml',
+  'http://www.marco.org/rss',
+  'https://fedoramagazine.org/feed/',
+  'https://www.justinobeirne.com/rss?format=rss',
+  'https://bartongeorge.io/feed/',
+  'http://feeds.feedburner.com/craigmod/',
+  'http://feeds.feedburner.com/BenjaminMayo',
+  'http://feeds.feedburner.com/GiantRobotsSmashingIntoOtherGiantRobots',
+  'http://sivers.org/en.atom',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCvsh_dI2wzjzsl_Y_sI4Txw',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCVYamHliCI9rw1tHR1xbkfw',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCdyTmTQTyGA2I7mMBODzqig',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCjB81tcYrS2eIJs452EThwg',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCM-Jj3DGtBDdQ8GB2oQnGUw',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCvWWf-LYjaujE50iYai8WgQ',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCkWQ0gDrqOCarmUKmppD7GQ',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCaJDcjxkg5YSTLWwxIUMsxA',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UC4w1YQAJMWOz4qtxinq55LQ',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCkJ1Sgtqj909kXj_kApY3rA',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCJ24N4O0bP7LGLBDvye7oCA',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCftcLVz-jtPXoH3cWUUDwYw',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCOWcZ6Wicl-1N34H0zZe38w',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCG98giOsUxIlXV0rNUhxLew',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCZdQjaSoLjIzFnWsDQOv4ww',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCLTU1O0KOYY_QKw23uj5ddQ',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCtZRKfyvx7GUEi-Lr7f4Nxg',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UCyKV3Zl7AKVj7ikyOlcfZTQ',
+  # 'https://www.youtube.com/feeds/videos.xml?channel_id=UChIs72whgZI9w6d6FhwGGHA'
+  ]
+
+# Date and time setup.
 utc = pytz.utc
-homeTZ = pytz.timezone('US/Central')
-dt = datetime.now(homeTZ)
-if dt.hour < 2:
-  dt = dt - timedelta(hours=24)
-start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
-start = start.astimezone(utc)
-try:
-  lastrun = os.path.getmtime('./rss.html')
-  lastrun = utc.localize(datetime.fromtimestamp(lastrun))
-except:
-  lastrun = start
+homeTZ = pytz.timezone('US/Eastern')
+# dt = datetime.now(homeTZ)
+# if dt.hour < 2:
+#   dt = dt - timedelta(hours=24)
+# start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+# start = start.astimezone(utc)
+# try:
+#   lastrun = os.path.getmtime('./rss.html')
+#   lastrun = utc.localize(datetime.fromtimestamp(lastrun))
+# except:
+#   lastrun = start
 
 # Collect all of today's posts and put them in a list of tuples.
 posts = []
@@ -51,12 +102,15 @@ for s in subscriptions:
   except KeyError:
     continue
   for e in f['entries']:
-    try:
-      when = e['published_parsed']
-    except KeyError:
-      when = e['updated_parsed']
-    when =  utc.localize(datetime.fromtimestamp(time.mktime(when)))
-    if when > lastrun:
+    # check if entry is in db
+    c.execute("SELECT count(*) FROM rss WHERE article_id = ?", (e['guid'],))
+    data = c.fetchone()[0]
+    if data == 0:
+      try:
+        when = e['published_parsed']
+      except KeyError:
+        when = e['updated_parsed']
+      when =  utc.localize(datetime.fromtimestamp(time.mktime(when)))
       title = e['title']
       try:
         body = e['content'][0]['value']
@@ -64,6 +118,7 @@ for s in subscriptions:
         body = e['summary']
       link = e['link']
       posts.append((when, blog, title, link, body))
+      c.execute("INSERT INTO rss VALUES (?, ?)", (blog, e['guid']))
 
 # Sort the posts in reverse chronological order.
 posts.sort()
@@ -82,6 +137,9 @@ for p in posts:
   q.insert(0, timestamp.strftime('%b %d, %Y %I:%M %p'))
   litems.append(listTemplate.format(*q))
 ul = '\n<hr />\n'.join(litems)
+
+conn.commit()
+conn.close()
 
 # Print the HTMl.
 html = '''<html>
@@ -165,7 +223,7 @@ img {{
   }}
 }}
 </style>
-<title>Today’s RSS</title>
+<title>Today's RSS</title>
 <body>
 <ul class="rss">
 {}
@@ -174,6 +232,5 @@ img {{
 </html>
 '''.format(ul)
 
-f = open('rss.html','w+')
-f.write(html)
-f.close()
+with open('rss.html', 'w+', encoding='utf-8') as f:
+  f.write(html)
