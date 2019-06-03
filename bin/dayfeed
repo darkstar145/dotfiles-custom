@@ -118,7 +118,8 @@ for s in subscriptions:
         body = e['summary']
       link = e['link']
       posts.append((when, blog, title, link, body))
-      c.execute("INSERT INTO rss VALUES (?, ?)", (blog, e['guid']))
+      if data == 0:
+        c.execute("INSERT INTO rss VALUES (?, ?)", (blog, e['guid']))
 
 # Sort the posts in reverse chronological order.
 posts.sort()
