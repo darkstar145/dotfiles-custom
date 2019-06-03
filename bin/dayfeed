@@ -7,8 +7,6 @@ import os
 
 conn = sqlite3.connect('./rss.db')
 c = conn.cursor()
-
-# Create table
 c.execute('''CREATE TABLE IF NOT EXISTS rss
              (feed string, article_id string)''')
 
@@ -79,21 +77,22 @@ subscriptions = [
   # 'https://www.youtube.com/feeds/videos.xml?channel_id=UChIs72whgZI9w6d6FhwGGHA'
   ]
 
-# Date and time setup.
+# Date and time
 utc = pytz.utc
 homeTZ = pytz.timezone('US/Eastern')
-# dt = datetime.now(homeTZ)
-# if dt.hour < 2:
-#   dt = dt - timedelta(hours=24)
-# start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
-# start = start.astimezone(utc)
+dt = datetime.now(homeTZ)
+if dt.hour < 2:
+  dt = dt - timedelta(hours=24)
+start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+start = start.astimezone(utc)
 # try:
 #   lastrun = os.path.getmtime('./rss.html')
 #   lastrun = utc.localize(datetime.fromtimestamp(lastrun))
 # except:
 #   lastrun = start
 
-# Collect all of today's posts and put them in a list of tuples.
+# Collect all of today's or unprocessed posts
+# and put them in a list of tuples.
 posts = []
 for s in subscriptions:
   f = fp.parse(s)
@@ -102,15 +101,16 @@ for s in subscriptions:
   except KeyError:
     continue
   for e in f['entries']:
+    # get time of entry
+    try:
+        when = e['published_parsed']
+    except KeyError:
+      when = e['updated_parsed']
+    when =  utc.localize(datetime.fromtimestamp(time.mktime(when)))
     # check if entry is in db
     c.execute("SELECT count(*) FROM rss WHERE article_id = ?", (e['guid'],))
     data = c.fetchone()[0]
-    if data == 0:
-      try:
-        when = e['published_parsed']
-      except KeyError:
-        when = e['updated_parsed']
-      when =  utc.localize(datetime.fromtimestamp(time.mktime(when)))
+    if data == 0 or when > start:
       title = e['title']
       try:
         body = e['content'][0]['value']
