@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import feedparser as fp
 import sqlite3
 import time
@@ -24,7 +26,7 @@ subscriptions = [
   'http://macdrifter.com/feeds/all.atom.xml',
   'http://www.norvig.com/rss-feed.xml',
   'http://mattgemmell.com/feed',
-  'http://www.loopinsight.com/feed/',
+  # 'http://www.loopinsight.com/feed/',
   'http://omgchrome.com/feed',
   'http://feeds2.feedburner.com/pugetsystems_all',
   'http://randsinrepose.com/feed/',
@@ -36,7 +38,7 @@ subscriptions = [
   'https://www.blog.google/rss/',
   'http://www.thecramped.com/feed/',
   'http://daringfireball.net/index.xml',
-  'http://mjtsai.com/blog/feed/',
+  #'http://mjtsai.com/blog/feed/',
   'http://thesweetsetup.com/feed/',
   'http://feeds.feedburner.com/InformationArchitectsJapan',
   'https://om.co/feed/',
