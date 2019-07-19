@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/home/stefan/.config/i3-regolith'
+let g:netrw_dirhist_2='/home/stefan/hackathon-nodejs-react'
+let g:netrw_dirhist_3='/home/stefan/hackathon-nodejs-react/client'
+let g:netrw_dirhist_4='/home/stefan/hackathon-nodejs-react/client/app'
